@@ -1,6 +1,6 @@
 # Simple Powershell traffic generator installer
 $FolderName = "C:\TrafficTest\"
-$TrafficLocation = "raw.githubusercontent.com/GhandiJones/powershell_scripts/master/simple_net_traffic.ps1"
+$TrafficLocation = "raw.githubusercontent.com/GhandiJones/powershell_scripts/master/traffic_scripts/simple_net_traffic.ps1"
 
 # Create sub-directory if needed
 if (-Not (Test-Path $FolderName)) {
