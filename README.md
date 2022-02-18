@@ -1,2 +1,2 @@
-# powershell_scripts
-Public source for Azure and AWS Windows script deployments
+# Powershell Scripts
+Public source for test Azure and AWS Windows automation script deployments
