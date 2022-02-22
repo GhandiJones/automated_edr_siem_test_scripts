@@ -10,4 +10,4 @@ if (-Not (Test-Path $FolderName)) {
 }
 
 (wget https://$TrafficLocation).Content | Out-File -FilePath ($FolderName + 'simple_net_traffic.ps1')
-schtasks /create /sc minute /mo 1 /tn SimpleGenerator /tr ("powershell.exe -file " + $TrafficLocation + " simple_net_traffic.ps1")
+schtasks /create /sc minute /mo 1 /tn SimpleGenerator /tr ("powershell.exe -file " + $FolderName + " simple_net_traffic.ps1")
