@@ -9,7 +9,8 @@ INFO=/var/log/lab-x-test-info.log
 DEBUG=/var/log/lab-x-test-debug.log
 
 # Create Log Files
-printf '' > $INFO > $DEBUG
+sudo touch $INFO
+sudo touch $DEBUG
 
 # Tail the info logfile as a background process so the contents of the
 # info logfile are output to stdout.
