@@ -37,7 +37,7 @@ curl www.eicar.org/download/eicar.com.txt > eicar.com.txt
 header "Test #2 - Mass Eicar file download" | tee -a $INFO
 for i in {1..5}; do arr_index=$(($RANDOM % $SIZE)); curl www.eicar.org/download/eicar.com.txt > "$EICAR_DIR/${MAL_NAMES[$arr_index]}-${i}.txt"; sleep 0.01; done
 # Crafted mass dump
-header "Test #2 - Mass Eicar file creation" | tee -a $INFO
+header "Test #3 - Mass Eicar file creation" | tee -a $INFO
 for i in {1..5}; do arr_index=$(($RANDOM % $SIZE)); echo 'X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*' > "$EICAR_DIR/${MAL_NAMES[$arr_index]}-${i}.txt"; sleep 0.01; done
 
 # MITRE Reference https://attack.mitre.org/techniques/T1003/008/
