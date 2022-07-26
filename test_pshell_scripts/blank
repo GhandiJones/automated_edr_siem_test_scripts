@@ -1,0 +1,4 @@
+$path = "C:\Users\lab_admin\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Accessories\notepad.exe";
+$value = ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x11,0x11,0x01,0x01,0x00,0x00));
+New-Item -Path $path -Force;
+New-ItemProperty -Path $path -Name "MitigationOptions" -Value $value -PropertyType Binary -Force
