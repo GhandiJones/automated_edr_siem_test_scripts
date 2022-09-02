@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euxo pipefail
+set -uxo pipefail
 
 function header () {
   echo "===== $1 ====="
@@ -29,16 +29,30 @@ header "EICAR Tests" | tee -a $INFO
 MAL_NAMES=("evil" "not-so-malware" "friendly-ish" "unholy" "foul" "naz-tea" "daemonic")
 SIZE=${#MAL_NAMES[@]}
 EICAR_DIR=/nothing/to/see/here
+EICAR_STR='X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*'
 sudo mkdir -p $EICAR_DIR
 # Single download
 header "Test #1 - Download Eicar" | tee -a $INFO
 curl www.eicar.org/download/eicar.com.txt > eicar.com.txt
 # Download mass dump
 header "Test #2 - Mass Eicar file download" | tee -a $INFO
-for i in {1..5}; do arr_index=$(($RANDOM % $SIZE)); curl www.eicar.org/download/eicar.com.txt > "$EICAR_DIR/${MAL_NAMES[$arr_index]}-${i}.txt"; sleep 0.01; done
+#for i in {1..5}; do arr_index=$(($RANDOM % $SIZE)); curl -v www.eicar.org/download/eicar.com.txt > "$EICAR_DIR/${MAL_NAMES[$arr_index]}-${i}.txt"; sleep 0.01; done
+for i in {1..5}
+do
+    arr_index=$(($RANDOM % $SIZE))
+    curl -s www.eicar.org/download/eicar.com.txt > "$EICAR_DIR/${MAL_NAMES[$arr_index]}-${i}.txt" || echo "ERROR: Could not write ${i} attempt."
+    sleep 0.02
+done
 # Crafted mass dump
 header "Test #3 - Mass Eicar file creation" | tee -a $INFO
-for i in {1..5}; do arr_index=$(($RANDOM % $SIZE)); echo 'X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*' > "$EICAR_DIR/${MAL_NAMES[$arr_index]}-${i}.txt"; sleep 0.01; done
+#for i in {1..5}; do arr_index=$(($RANDOM % $SIZE)); echo 'X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*' > "$EICAR_DIR/${MAL_NAMES[$arr_index]}-${i}.txt"; sleep 0.02; done
+
+for i in {1..5}
+do
+    arr_index=$(($RANDOM % $SIZE))
+    echo $EICAR_STR > "$EICAR_DIR/${MAL_NAMES[$arr_index]}-${i}.txt" || echo "ERROR: Could not write ${i} attempt."
+    sleep 0.02
+done
 
 # MITRE Reference https://attack.mitre.org/techniques/T1003/008/
 # Tests from https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1003.008/T1003.008.md
